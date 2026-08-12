@@ -30,12 +30,18 @@ if ! id "$APP_USER" &>/dev/null; then
   useradd --system --create-home --home-dir "/home/$APP_USER" --shell /usr/sbin/nologin "$APP_USER"
 fi
 
+# Direktori ini dimiliki user 'hermes' tapi skrip jalan sebagai root, jadi git
+# menolaknya sebagai "dubious ownership". Flag -c dipasang per-perintah supaya
+# tidak bergantung pada file config mana pun (--global di balik sudo tidak andal
+# karena HOME bisa berbeda antar-sesi).
+GIT=(git -c "safe.directory=$APP_DIR")
+
 if [[ -d "$APP_DIR/.git" ]]; then
   echo "==> Mengambil versi terbaru"
-  git -C "$APP_DIR" fetch --quiet origin
-  git -C "$APP_DIR" remote set-head origin --auto >/dev/null 2>&1 || true
-  BRANCH=$(git -C "$APP_DIR" symbolic-ref --short -q refs/remotes/origin/HEAD || echo origin/main)
-  git -C "$APP_DIR" reset --hard --quiet "$BRANCH"
+  "${GIT[@]}" -C "$APP_DIR" fetch --quiet origin
+  "${GIT[@]}" -C "$APP_DIR" remote set-head origin --auto >/dev/null 2>&1 || true
+  BRANCH=$("${GIT[@]}" -C "$APP_DIR" symbolic-ref --short -q refs/remotes/origin/HEAD || echo origin/main)
+  "${GIT[@]}" -C "$APP_DIR" reset --hard --quiet "$BRANCH"
 else
   echo "==> Meng-clone repo"
   git clone --quiet "$REPO_URL" "$APP_DIR"

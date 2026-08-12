@@ -9,13 +9,16 @@ StartLimitBurst=10
 
 [Service]
 Type=simple
-User=hermes
-Group=hermes
-WorkingDirectory=/home/hermes
-Environment=HOME=/home/hermes
 
-# Sesuaikan path kalau `which hermes` menunjukkan lokasi lain
-ExecStart=/usr/local/bin/hermes proxy start --host 127.0.0.1 --port 8645
+# GANTI ketiganya sesuai user login kamu — user ini yang menjalankan
+# `hermes portal`, karena token OAuth tersimpan di home miliknya.
+User=GANTI_USER
+WorkingDirectory=/home/GANTI_USER
+Environment=HOME=/home/GANTI_USER
+
+# GANTI dengan hasil `which hermes`. Installer biasanya menaruhnya
+# di ~/.local/bin/hermes, bukan /usr/local/bin.
+ExecStart=/home/GANTI_USER/.local/bin/hermes proxy start --host 127.0.0.1 --port 8645
 
 Restart=always
 RestartSec=5
@@ -24,8 +27,8 @@ StandardOutput=journal
 StandardError=journal
 SyslogIdentifier=hermes-proxy
 
-# Catatan: ProtectHome sengaja TIDAK dipakai — proxy perlu baca
-# token OAuth di /home/hermes/.hermes/auth.json
+# ProtectHome sengaja TIDAK dipakai — proxy perlu membaca
+# token OAuth di ~/.hermes/auth.json
 NoNewPrivileges=true
 PrivateTmp=true
 RestrictSUIDSGID=true
