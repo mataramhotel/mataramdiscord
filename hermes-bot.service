@@ -1,0 +1,36 @@
+[Unit]
+Description=Hermes Discord bot
+After=network-online.target
+Wants=network-online.target
+
+# Kalau gagal terus, jangan spam restart selamanya
+StartLimitIntervalSec=300
+StartLimitBurst=10
+
+[Service]
+Type=simple
+User=hermes
+Group=hermes
+WorkingDirectory=/opt/hermes-bot
+ExecStart=/opt/hermes-bot/.venv/bin/python /opt/hermes-bot/bot.py
+
+# Hidupkan lagi kalau crash, koneksi putus, atau VPS reboot
+Restart=always
+RestartSec=5
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=hermes-bot
+
+# Pengamanan dasar
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+ReadWritePaths=/opt/hermes-bot
+
+[Install]
+WantedBy=multi-user.target
