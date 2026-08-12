@@ -1,0 +1,34 @@
+[Unit]
+Description=Hermes subscription proxy (Nous Portal)
+Documentation=https://hermes-agent.nousresearch.com/docs/user-guide/features/subscription-proxy
+After=network-online.target
+Wants=network-online.target
+
+StartLimitIntervalSec=300
+StartLimitBurst=10
+
+[Service]
+Type=simple
+User=hermes
+Group=hermes
+WorkingDirectory=/home/hermes
+Environment=HOME=/home/hermes
+
+# Sesuaikan path kalau `which hermes` menunjukkan lokasi lain
+ExecStart=/usr/local/bin/hermes proxy start --host 127.0.0.1 --port 8645
+
+Restart=always
+RestartSec=5
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=hermes-proxy
+
+# Catatan: ProtectHome sengaja TIDAK dipakai — proxy perlu baca
+# token OAuth di /home/hermes/.hermes/auth.json
+NoNewPrivileges=true
+PrivateTmp=true
+RestrictSUIDSGID=true
+
+[Install]
+WantedBy=multi-user.target

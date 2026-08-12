@@ -1,7 +1,11 @@
 [Unit]
 Description=Hermes Discord bot
-After=network-online.target
+After=network-online.target hermes-proxy.service
 Wants=network-online.target
+
+# Kalau pakai Nous Portal lewat subscription proxy, aktifkan baris ini
+# supaya proxy selalu ikut hidup duluan:
+# Requires=hermes-proxy.service
 
 # Kalau gagal terus, jangan spam restart selamanya
 StartLimitIntervalSec=300
